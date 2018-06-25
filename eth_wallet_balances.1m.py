@@ -1,4 +1,4 @@
-#!env python3
+#!/usr/local/homebrew/bin/python3
 """Loads Ethereum wallet address (configured below) and all tokens associated with
    each address. Then displays current $USD value in the bitbar title, with a drop-down
    showing each total value for owned ETH and each token.
@@ -38,7 +38,6 @@ if __name__ == '__main__':
         res = requests.get(EE_URL + 'getAddressInfo/' + addr + EE_QS)
         res.raise_for_status()
         resp = res.json()
-        print(resp)
 
         eth_sum += resp.get('ETH', {}).get('balance', 0)
 
@@ -75,3 +74,15 @@ if __name__ == '__main__':
 
     for token, bal in sorted(my_tokens.items(), key=operator.itemgetter(1), reverse=True):
         print(token, "%.2f" % bal)
+    # links to wallet addresses on etherscan.io:
+    for wallet in WALLET_ADDRESSES:
+        print("Etherscan: %s" % wallet[:6] + "|href=https://etherscan.io/address/" + wallet)
+
+    res = requests.get('https://api.coinmarketcap.com/v2/ticker/1/')
+    res.raise_for_status()
+    btc_price = res.json()['data']['quotes']['USD']['price']
+    # print ETH and BTC prices:
+    print("Prices:")
+    print(" BTC: %s" % str(btc_price))
+    print(" ETH: %s" % str(eth_price))
+
