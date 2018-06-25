@@ -22,9 +22,9 @@ WALLET_ADDRESSES = [
 # <bitbar.author>Charlie Schluting</bitbar.author>
 # <bitbar.author.github>manos</bitbar.author.github>
 # <bitbar.desc>Displays a $USD total across all configured wallets, with drop-down showing the value of your ETH and all tokens held.</bitbar.desc>
-# <bitbar.image>http://www.hosted-somewhere/pluginimage</bitbar.image>
+# <bitbar.image>https://schluting.com/temp/bitbar-eth-bal.png</bitbar.image>
 # <bitbar.dependencies>python3</bitbar.dependencies>
-# <bitbar.abouturl>http://url-to-about.com/</bitbar.abouturl>
+# <bitbar.abouturl>https://github.com/manos/bitbar_ethereum_wallet_balances</bitbar.abouturl>
 
 ETHEXPLORER_API_KEY = 'freekey'
 EE_URL = 'http://api.ethplorer.io/'
@@ -83,6 +83,6 @@ if __name__ == '__main__':
     btc_price = res.json()['data']['quotes']['USD']['price']
     # print ETH and BTC prices:
     print("Prices:")
-    print(" BTC: %s" % str(btc_price))
-    print(" ETH: %s" % str(eth_price))
+    print("BTC: %s" % str(btc_price))
+    print("ETH: %s" % str(eth_price))
 
