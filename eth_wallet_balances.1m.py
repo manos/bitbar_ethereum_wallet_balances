@@ -16,6 +16,9 @@ WALLET_ADDRESSES = [
     '0x418091020F2A909479C4058E32BE08464A45DA8A',
 ]
 
+# Tickers to display at the bottom:
+TICKERS = ['BTC', 'ETH', 'LTC']
+
 # <bitbar.title>Etherum Wallet (and token) Balances</bitbar.title>
 # <bitbar.version>v1.0</bitbar.version>
 # <bitbar.author>Charlie Schluting</bitbar.author>
@@ -28,15 +31,31 @@ WALLET_ADDRESSES = [
 ETHEXPLORER_API_KEY = 'freekey'
 EE_URL = 'http://api.ethplorer.io/'
 EE_QS = '?apiKey=%s' % ETHEXPLORER_API_KEY
+CMC_LISTINGS = []
+
+def get_json(url):
+    """Fetches URL and returns JSON. """
+    res = requests.get(url)
+    res.raise_for_status()
+    return res.json()
+
+def get_ticker_price(ticker):
+    """Returns current price (from coinmarketcap.com) for given symbol. """
+    ticker_id = [x['id'] for x in CMC_LISTINGS['data'] if x['symbol'] == ticker][0]
+
+    resp = get_json('https://api.coinmarketcap.com/v2/ticker/%s/' % ticker_id)
+    return resp['data']['quotes']['USD']['price']
+
 
 if __name__ == '__main__':
     eth_sum = 0
     my_tokens = defaultdict(lambda: 0)
 
+    # Load up coinmarketcap.com listings:
+    CMC_LISTINGS = get_json('https://api.coinmarketcap.com/v2/listings/')
+
     for addr in WALLET_ADDRESSES:
-        res = requests.get(EE_URL + 'getAddressInfo/' + addr + EE_QS)
-        res.raise_for_status()
-        resp = res.json()
+        resp = get_json(EE_URL + 'getAddressInfo/' + addr + EE_QS)
 
         eth_sum += resp.get('ETH', {}).get('balance', 0)
 
@@ -58,14 +77,7 @@ if __name__ == '__main__':
                 my_tokens[token['tokenInfo']['symbol']]['usd'] += float(token['balance']) * token_price
         time.sleep(1)
 
-    res = requests.get('https://api.coinmarketcap.com/v2/ticker/1027/')
-    res.raise_for_status()
-    resp = res.json()
-
-    if resp['data']['symbol'] != 'ETH':
-        raise "coinmarketcap.com API didn't return an ETH price!"
-
-    eth_price = resp['data']['quotes']['USD']['price']
+    eth_price = get_ticker_price('ETH')
     my_eth_bal = float(eth_price) * float(eth_sum)
 
     # total $USD amount:
@@ -87,13 +99,6 @@ if __name__ == '__main__':
     for wallet in WALLET_ADDRESSES:
         print("Etherscan: %s" % wallet[:6] + "|href=https://etherscan.io/address/" + wallet + " color=blue")
 
-    res = requests.get('https://api.coinmarketcap.com/v2/ticker/1/')
-    res.raise_for_status()
-    if res.json()['data']['symbol'] != 'BTC':
-        raise "coinmarketcap.com API didn't return a BTC price!"
-    btc_price = res.json()['data']['quotes']['USD']['price']
-
-    # print ETH and BTC prices:
     print("Prices:")
-    print("BTC: %s|color=green" % str(btc_price))
-    print("ETH: %s|color=green" % str(eth_price))
+    for ticker in TICKERS:
+        print("%s: %s|color=green" % (ticker, str(get_ticker_price(ticker))))
