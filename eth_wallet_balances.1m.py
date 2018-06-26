@@ -17,7 +17,7 @@ WALLET_ADDRESSES = [
 ]
 
 # Tickers to display at the bottom:
-TICKERS = ['BTC', 'ETH', 'LTC']
+TICKERS = ['BTC', 'ETH', 'LTC', 'C20']
 
 # <bitbar.title>Etherum Wallet (and token) Balances</bitbar.title>
 # <bitbar.version>v1.0</bitbar.version>

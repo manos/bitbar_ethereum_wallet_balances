@@ -9,4 +9,5 @@ Uses ethexplorer.io to fetch wallet, its tokens, and prices.
 
 ## Usage
 Edit the script to input your specific WALLET\_ADDRESSES - the ones provides are random.  
+Also, TICKERS can be changed to quote the ones you care about.  
 You may also need to update the path to python3 on the first line...
